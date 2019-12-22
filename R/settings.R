@@ -84,20 +84,6 @@ find_config <- function(filename) {
     return(linter_config)
   }
 
-  ## next check for a file higher directories
-  linter_config <- find_config2(path)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
-  }
-
-  ## next check for a file in the user directory
-  # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
-  home_dir <- Sys.getenv("HOME", unset = "~")
-  linter_config <- file.path(home_dir, linter_file)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
-  }
-
   NULL
 }
 

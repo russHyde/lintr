@@ -233,7 +233,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = lis
   read_settings(path)
   on.exit(clear_settings, add = TRUE)
 
-  exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
+  exclusions <- normalize_exclusions(c(exclusions, settings$exclusions))
 
   lints <- lint_dir(file.path(path, c("R", "tests", "inst")), relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
 
@@ -276,19 +276,6 @@ is_root <- function(path) {
 
 has_config <- function(path, config) {
   file.exists(file.path(path, config))
-}
-
-find_config2 <- function(path) {
-  config <- basename(getOption("lintr.linter_file"))
-  path <- normalizePath(path, mustWork = FALSE)
-
-  while (!has_config(path, config)) {
-    path <- dirname(path)
-    if (is_root(path)) {
-      return(character())
-    }
-  }
-  return(file.path(path, config))
 }
 
 pkg_name <- function(path = find_package()) {
