@@ -14,8 +14,8 @@ test_that("lint() results do not depend on the working directory", {
   pkg_path <- file.path("dummy_packages", "assignmentLinter")
 
   # put a .lintr in the package root that excludes the first line of `R/jkl.R`
-  config_path <- file.path(pkg_path, ".lintr")
-  config_string <- "exclusions: list('R/jkl.R' = 1)\n"
+  config_path <- file.path(pkg_path, "R", ".lintr")
+  config_string <- "exclusions: list('jkl.R' = 1)\n"
   cat(config_string, file = config_path)
   on.exit(unlink(config_path))
 
@@ -80,11 +80,11 @@ test_that("lint() results do not depend on the position of the .lintr", {
   expected_lines <- "mno = 789"
 
   lints_with_config_at_pkg_root <- withr::with_dir(
-    pkg_path,
+    file.path(pkg_path, "R"),
     lint_with_config(
       config_path = ".lintr",
-      config_string = "exclusions: list('R/jkl.R' = 1)\n",
-      filename = file.path("R", "jkl.R")
+      config_string = "exclusions: list('jkl.R' = 1)\n",
+      filename = "jkl.R"
     )
   )
 
