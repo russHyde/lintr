@@ -113,3 +113,25 @@ test_that(
   )
 })
 
+test_that(
+  "`lint_package` does not depend on path to pkg - with exclusions argument", {
+    # The test checks the results of lint_package when the excluded regions are
+    # given as an argument of the function and are specified using absolute and
+    # relative paths
+
+    pkg_path <- file.path("dummy_packages", "assignmentLinter")
+
+    # Create list of exclusions relative to the whole of `abc.R` and the first
+    # line of `jkl.R`
+    exclusions <- list(normalizePath(file.path(pkg_path, 'R/abc.R')),
+                       'R/jkl.R' = 1)
+
+    expected_lines <- c("mno = 789")
+    lints_from_outside <- lint_package(
+      pkg_path, linters = list(assignment_linter), exclusions = exclusions
+    )
+
+    expect_equal(
+      as.data.frame(lints_from_outside)[["line"]], expected_lines
+    )
+})

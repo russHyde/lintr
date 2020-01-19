@@ -174,11 +174,25 @@ test_that("it normalizes file paths, removing non-existing files", {
   t1 <- list(); t1[[a]] <- 1:10
   t2 <- list(); t2[["notafile"]] <- 5:15
   t3 <- list(); t3[[c]] <- 5:15
+  t4 <- list(); t4[[basename(c)]] <- 5:15
+  pkg_root <- "../.."
+  prefix <- file.path("tests", "testthat")
   res <- list(); res[[a]] <- 1:10; res[[normalizePath(c)]] <- 5:15
   expect_equal(normalize_exclusions(c(t1, t2, t3)), res)
+  expect_equal(withr::with_dir(pkg_root, normalize_exclusions(c(t1, t2, t4),
+                                                              dir_prefix=prefix)),
+               res)
 
   res <- list(); res[[a]] <- 1:10; res[["notafile"]] <- 5:15; res[[c]] <- 5:15
   expect_equal(normalize_exclusions(c(t1, t2, t3), normalize_path=FALSE), res)
+
+  res <- list(); res[[a]] <- 1:10; res[[file.path(prefix, "notafile")]] <- 5:15
+  res[[file.path(prefix, basename(c))]] <- 5:15
+  expect_equal(withr::with_dir(pkg_root,
+                               normalize_exclusions(c(t1, t2, t4),
+                                                    normalize_path=FALSE,
+                                                    dir_prefix=prefix)),
+               res)
 })
 
 unlink(c(a, b, c))
